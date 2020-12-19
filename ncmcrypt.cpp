@@ -201,7 +201,7 @@ void NeteaseCrypt::FixMetadata() {
 			frame->setMimeType(mimeType(mImageData));
 			frame->setPicture(vector);
 
-			dynamic_cast<TagLib::ID3v2::Tag*>(tag)->addFrame(frame);
+			static_cast<TagLib::ID3v2::Tag*>(tag)->addFrame(frame);
 		}
 	}
 	break;
@@ -217,7 +217,7 @@ void NeteaseCrypt::FixMetadata() {
 			cover->setType(TagLib::FLAC::Picture::FrontCover);
 			cover->setData(vector);
 
-			dynamic_cast<TagLib::FLAC::File*>(audioFile)->addPicture(cover);
+			static_cast<TagLib::FLAC::File*>(audioFile)->addPicture(cover);
 		}
 	}
 	break;
@@ -231,7 +231,7 @@ void NeteaseCrypt::FixMetadata() {
 		tag->setAlbum(TagLib::String(mMetaData->album(), TagLib::String::UTF8));
 	}
 
-	tag->setComment("SB Netease Cloud, cnm");
+	tag->setComment(TagLib::String(u8"SB网易云音乐我操你妈",TagLib::String::UTF8));
 
 	audioFile->save();
 }
