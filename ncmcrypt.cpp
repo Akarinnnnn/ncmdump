@@ -112,17 +112,12 @@ NeteaseMusicMetadata::NeteaseMusicMetadata(cJSON* raw) {
 }
 
 bool NeteaseCrypt::openFile(std::string const& path) {
-	try {
-		mFile.open(path, std::ios::in | std::ios::binary);
-	}
-	catch (...) {
-		return false;
-	}
-	return true;
+	mFile.open(path, std::ios::in | std::ios::binary);
+	return mFile.is_open();
 }
 
 bool NeteaseCrypt::isNcmFile() {
-	unsigned int header;
+	unsigned int header = 0;
 
 	mFile.read(reinterpret_cast<char*>(&header), sizeof(header));
 	if (header != (unsigned int)0x4e455443) {
