@@ -194,7 +194,7 @@ void NeteaseCrypt::FixMetadata() {
 		audioFile = new TagLib::MPEG::File(mDumpFilepath.c_str());
 		tag = dynamic_cast<TagLib::MPEG::File*>(audioFile)->ID3v2Tag(true);
 
-		if (mImageData.length() > 0) 
+		if (mImageData.length() > 0)
 		{
 			TagLib::ID3v2::AttachedPictureFrame* frame = new TagLib::ID3v2::AttachedPictureFrame;
 
@@ -204,13 +204,13 @@ void NeteaseCrypt::FixMetadata() {
 			dynamic_cast<TagLib::ID3v2::Tag*>(tag)->addFrame(frame);
 		}
 	}
-		break;
+	break;
 	case NeteaseCrypt::FLAC:
 	{
 		audioFile = new TagLib::FLAC::File(mDumpFilepath.c_str());
 		tag = audioFile->tag();
 
-		if (mImageData.length() > 0) 
+		if (mImageData.length() > 0)
 		{
 			TagLib::FLAC::Picture* cover = new TagLib::FLAC::Picture;
 			cover->setMimeType(mimeType(mImageData));
@@ -220,7 +220,7 @@ void NeteaseCrypt::FixMetadata() {
 			dynamic_cast<TagLib::FLAC::File*>(audioFile)->addPicture(cover);
 		}
 	}
-		break;
+	break;
 	default:
 		throw std::invalid_argument("unknown format");
 	}
@@ -374,7 +374,9 @@ NeteaseCrypt::NeteaseCrypt(std::string const& path) {
 		// std::cout << modifyDecryptData << std::endl;
 
 		delete[] modifyData;
-		mMetaData = new NeteaseMusicMetadata(cJSON_Parse(modifyDecryptData.c_str()));
+		auto* pjson = cJSON_Parse(modifyDecryptData.c_str());
+		mMetaData = new NeteaseMusicMetadata(pjson);
+		cJSON_free(pjson);
 	}
 
 	// skip crc32 & unuse charset
@@ -386,11 +388,11 @@ NeteaseCrypt::NeteaseCrypt(std::string const& path) {
 	read(reinterpret_cast<char*>(&n), sizeof(n));
 
 	if (n > 0) {
-		char* imageData = new char[n];
 
-		read(imageData, n);
 
-		mImageData = std::string(imageData, n);
+		mImageData.resize(n);
+		read((char*)mImageData.data(), n);
+
 	}
 	else {
 		printf("[Warn] `%s` missing album can't fix album image!\n", path.c_str());
