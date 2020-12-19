@@ -231,7 +231,7 @@ void NeteaseCrypt::FixMetadata() {
 		tag->setAlbum(TagLib::String(mMetaData->album(), TagLib::String::UTF8));
 	}
 
-	tag->setComment(TagLib::String("Create by netease copyright protected dump tool. author 5L", TagLib::String::UTF8));
+	tag->setComment("SB Netease Cloud, cnm");
 
 	audioFile->save();
 }
@@ -386,7 +386,8 @@ NeteaseCrypt::NeteaseCrypt(std::string const& path) {
 	read(reinterpret_cast<char*>(&n), sizeof(n));
 
 	if (n > 0) {
-		char* imageData = (char*)malloc(n);
+		char* imageData = new char[n];
+
 		read(imageData, n);
 
 		mImageData = std::string(imageData, n);
